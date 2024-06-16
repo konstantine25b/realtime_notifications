@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Button Click Logger</title>
+</head>
+<body>
+    <input id="log-button" type="button" value="Click Me">
+
+    <script>
+        // Establish WebSocket connection to the 'noti' endpoint
+        const notiSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/noti/'
+        );
+
+        // Log messages received from the WebSocket
+        notiSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log('Message received:', data.message);
+        };
+
+        // Handle WebSocket closure
+        notiSocket.onclose = function(e) {
+            console.error('Notification socket closed unexpectedly');
+        };
+
+        // Send a message when the button is clicked
+        document.querySelector('#log-button').onclick = function() {
+            const message = 'Button was clicked!';
+            notiSocket.send(JSON.stringify({ 'message': message }));
+            console.log(message);
+        };
+    </script>
+</body>
+</html>
